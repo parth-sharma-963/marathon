@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCollection } from '@/lib/db'
+import { getCollection, User } from '@/lib/db'
 import { hashPassword, comparePassword } from '@/lib/password'
 import { generateToken } from '@/lib/auth'
 
@@ -11,15 +11,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const usersCollection = await getCollection('users') as any
-    const user = await usersCollection.findOne({ email }) as any
+    const usersCollection = await getCollection<User>('users')
+    const user = await usersCollection.findOne({ email })
 
     if (user) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 })
     }
 
     const hashedPassword = await hashPassword(password)
-    const result = await (usersCollection as any).insertOne({
+    const result = await usersCollection.insertOne({
       email,
       password: hashedPassword,
       createdAt: new Date(),
