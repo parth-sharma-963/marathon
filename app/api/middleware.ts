@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { extractTokenFromHeader, verifyToken } from '@/lib/auth'
 
 export function middleware(request: NextRequest) {
-  const token = extractTokenFromHeader(request.headers.get('authorization'))
+  const token = extractTokenFromHeader(request.headers.get('authorization') || undefined)
 
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
