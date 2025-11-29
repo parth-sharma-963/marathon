@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCollection, Form, Submission } from '@/lib/db'
 import { extractTokenFromHeader, verifyToken } from '@/lib/auth'
-import { ObjectId } from 'mongodb'
+import { ObjectId, Filter } from 'mongodb'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -18,10 +18,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Verify form ownership
     const formsCollection = await getCollection<Form>('forms')
-    const form = await formsCollection.findOne({
+    const getFilter: any = {
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
-    } as any)
+    }
+    const form = await formsCollection.findOne(getFilter as any)
 
     if (!form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
@@ -67,10 +68,11 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     // Verify form ownership
     const formsCollection = await getCollection<Form>('forms')
-    const form = await formsCollection.findOne({
+    const deleteFormFilter: any = {
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
-    } as any)
+    }
+    const form = await formsCollection.findOne(deleteFormFilter as any)
 
     if (!form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
@@ -86,10 +88,11 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     // Delete submission
     const submissionsCollection = await getCollection<Submission>('submissions')
-    const result = await submissionsCollection.deleteOne({
+    const submissionFilter: any = {
       _id: new ObjectId(submissionId),
       formId: form._id!.toString(),
-    } as any)
+    }
+    const result = await submissionsCollection.deleteOne(submissionFilter as any)
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: 'Submission not found' }, { status: 404 })

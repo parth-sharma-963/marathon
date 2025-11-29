@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCollection, Form, Submission } from '@/lib/db'
 import { extractTokenFromHeader, verifyToken } from '@/lib/auth'
-import { ObjectId } from 'mongodb'
+import { ObjectId, Filter } from 'mongodb'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -39,10 +39,11 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const formsCollection = await getCollection<Form>('forms')
-    const form = await formsCollection.findOne({
+    const filter: any = {
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
-    } as any)
+    }
+    const form = await formsCollection.findOne(filter as any)
 
     if (!form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
