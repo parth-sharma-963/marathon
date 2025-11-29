@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const usersCollection = await getCollection('users')
+    const usersCollection = await getCollection('users') as any
     const user = await usersCollection.findOne({ email }) as any
 
     if (user) {
