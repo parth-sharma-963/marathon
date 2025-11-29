@@ -3,6 +3,12 @@ import { getCollection } from '@/lib/db'
 import { comparePassword } from '@/lib/password'
 import { generateToken } from '@/lib/auth'
 
+interface User {
+  email: string
+  password: string
+  _id?: any
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
@@ -11,21 +17,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const usersCollection = await getCollection('users')
+    const usersCollection = await getCollection<User>('users')
     const user = await usersCollection.findOne({ email })
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    const isPasswordValid = await comparePassword(password, user.password as string)
+    const isPasswordValid = await comparePassword(password, user.password)
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
     const token = generateToken({
       userId: user._id!.toString(),
-      email: user.email as string,
+      email: user.email,
     })
 
     return NextResponse.json({
