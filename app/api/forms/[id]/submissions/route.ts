@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const form = await formsCollection.findOne({
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
-    })
+    } as any)
 
     if (!form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
@@ -70,7 +70,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const form = await formsCollection.findOne({
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
-    })
+    } as any)
 
     if (!form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
@@ -89,7 +89,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const result = await submissionsCollection.deleteOne({
       _id: new ObjectId(submissionId),
       formId: form._id!.toString(),
-    })
+    } as any)
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: 'Submission not found' }, { status: 404 })

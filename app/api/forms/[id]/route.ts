@@ -42,7 +42,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const form = await formsCollection.findOne({
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
-    })
+    } as any)
 
     if (!form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
