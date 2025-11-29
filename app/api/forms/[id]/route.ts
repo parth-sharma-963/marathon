@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCollection } from '@/lib/db'
+import { getCollection, Form, Submission } from '@/lib/db'
 import { extractTokenFromHeader, verifyToken } from '@/lib/auth'
 import { ObjectId } from 'mongodb'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params
-    const formsCollection = await getCollection('forms')
+    const formsCollection = await getCollection<Form>('forms')
     const form = await formsCollection.findOne({ shareLink: resolvedParams.id })
 
     if (!form) {
@@ -38,7 +38,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
-    const formsCollection = await getCollection('forms')
+    const formsCollection = await getCollection<Form>('forms')
     const form = await formsCollection.findOne({
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
@@ -52,7 +52,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     await formsCollection.deleteOne({ _id: form._id })
 
     // Delete all submissions for this form
-    const submissionsCollection = await getCollection('submissions')
+    const submissionsCollection = await getCollection<Submission>('submissions')
     await submissionsCollection.deleteMany({ formId: form._id!.toString() })
 
     return NextResponse.json({ message: 'Form and submissions deleted successfully' })

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCollection } from '@/lib/db'
+import { getCollection, Form, Submission } from '@/lib/db'
 import { extractTokenFromHeader, verifyToken } from '@/lib/auth'
 import { ObjectId } from 'mongodb'
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Verify form ownership
-    const formsCollection = await getCollection('forms')
+    const formsCollection = await getCollection<Form>('forms')
     const form = await formsCollection.findOne({
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Get submissions
-    const submissionsCollection = await getCollection('submissions')
+    const submissionsCollection = await getCollection<Submission>('submissions')
     const submissions = await submissionsCollection
       .find({
         formId: form._id!.toString(),
@@ -66,7 +66,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     // Verify form ownership
-    const formsCollection = await getCollection('forms')
+    const formsCollection = await getCollection<Form>('forms')
     const form = await formsCollection.findOne({
       _id: new ObjectId(resolvedParams.id),
       userId: payload.userId,
@@ -85,7 +85,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     // Delete submission
-    const submissionsCollection = await getCollection('submissions')
+    const submissionsCollection = await getCollection<Submission>('submissions')
     const result = await submissionsCollection.deleteOne({
       _id: new ObjectId(submissionId),
       formId: form._id!.toString(),

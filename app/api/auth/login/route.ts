@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCollection } from '@/lib/db'
+import { getCollection, User } from '@/lib/db'
 import { comparePassword } from '@/lib/password'
 import { generateToken } from '@/lib/auth'
-
-interface User {
-  email: string
-  password: string
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,8 +11,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const usersCollection = await getCollection('users') as any
-    const user = (await usersCollection.findOne({ email })) as any
+    const usersCollection = await getCollection<User>('users')
+    const user = await usersCollection.findOne({ email })
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
