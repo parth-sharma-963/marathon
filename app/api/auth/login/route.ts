@@ -6,7 +6,6 @@ import { generateToken } from '@/lib/auth'
 interface User {
   email: string
   password: string
-  _id?: any
 }
 
 export async function POST(request: NextRequest) {
@@ -17,14 +16,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const usersCollection = await getCollection<User>('users')
-    const user = await usersCollection.findOne({ email })
+    const usersCollection = await getCollection('users')
+    const user = await usersCollection.findOne({ email }) as any
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    const isPasswordValid = await comparePassword(password, user.password)
+    const isPasswordValid = await comparePassword(password, user.password as string)
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }

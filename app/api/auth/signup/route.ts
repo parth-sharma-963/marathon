@@ -3,12 +3,6 @@ import { getCollection } from '@/lib/db'
 import { hashPassword, comparePassword } from '@/lib/password'
 import { generateToken } from '@/lib/auth'
 
-interface User {
-  email: string
-  password: string
-  createdAt: Date
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
@@ -17,8 +11,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const usersCollection = await getCollection<User>('users')
-    const user = await usersCollection.findOne({ email })
+    const usersCollection = await getCollection('users')
+    const user = await usersCollection.findOne({ email }) as any
 
     if (user) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 })
