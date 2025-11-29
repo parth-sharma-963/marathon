@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection } from 'mongodb'
+import { MongoClient, Db, Collection, ObjectId } from 'mongodb'
 
 let client: MongoClient | null = null
 let db: Db | null = null
@@ -26,7 +26,7 @@ export async function getCollection<T>(collectionName: string): Promise<Collecti
 }
 
 export interface User {
-  _id?: string
+  _id?: ObjectId
   email: string
   password: string
   createdAt: Date
@@ -44,7 +44,7 @@ export interface FormSchema {
 }
 
 export interface Form {
-  _id?: string
+  _id?: ObjectId
   userId: string
   title: string
   purpose: string
@@ -57,7 +57,7 @@ export interface Form {
 }
 
 export interface Submission {
-  _id?: string
+  _id?: ObjectId
   formId: string
   responses: Record<string, any>
   imageUrls: Record<string, string>
@@ -65,7 +65,7 @@ export interface Submission {
 }
 
 export interface CachedRetrieval {
-  _id?: string
+  _id?: ObjectId
   queryHash: string
   userId: string
   retrievedForms: string[]
