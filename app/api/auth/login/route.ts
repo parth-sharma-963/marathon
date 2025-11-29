@@ -17,13 +17,14 @@ export async function POST(request: NextRequest) {
     }
 
     const usersCollection = await getCollection('users')
-    const user = await usersCollection.findOne({ email }) as any
+    const user = (await usersCollection.findOne({ email })) as any
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    const isPasswordValid = await comparePassword(password, user.password as string)
+    const userPassword: string = user.password || ''
+    const isPasswordValid = await comparePassword(password, userPassword)
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
