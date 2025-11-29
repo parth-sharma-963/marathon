@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedPassword = await hashPassword(password)
-    const result = await usersCollection.insertOne({
+    const result = await (usersCollection as any).insertOne({
       email,
       password: hashedPassword,
       createdAt: new Date(),
