@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection, ObjectId } from 'mongodb'
+import { MongoClient, Db, Collection, ObjectId, Document } from 'mongodb'
 
 let client: MongoClient | null = null
 let db: Db | null = null
@@ -20,7 +20,7 @@ export async function connectToDatabase(): Promise<Db> {
   return db
 }
 
-export async function getCollection<T>(collectionName: string): Promise<Collection<T>> {
+export async function getCollection<T extends Document>(collectionName: string): Promise<Collection<T>> {
   const database = await connectToDatabase()
   return database.collection<T>(collectionName)
 }

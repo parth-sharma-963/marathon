@@ -49,7 +49,7 @@ export default function FormPage({ params }: { params: Promise<{ id: string }> }
   const handleSubmit = async (data: any, imageUrls: Record<string, string>) => {
     setIsSubmitting(true)
     try {
-      const response = await fetch(`/api/forms/${params.id}/submit`, {
+      const response = await fetch(`/api/forms/${formId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
